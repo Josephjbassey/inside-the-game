@@ -13,6 +13,16 @@ from narratives.agents import (
 )
 from narratives.models import MatchNarrative
 from narratives.services import NarrativeService
+from translation.service import TranslatorService
+
+
+def _translate_content(content, language):
+    """Translate content to target language via Azure AI Translator.
+    Returns original text if language is 'en' or translator unconfigured."""
+    if language == "en":
+        return content
+    translator = TranslatorService()
+    return translator.translate(content, language)
 
 
 @require_http_methods(["GET"])
@@ -22,7 +32,8 @@ def narrative_api(request, match_id):
     language = request.GET.get("lang", "en")
     state = MatchState.from_match(match)
     producer = NarrativeProducer()
-    content = producer.produce_narrative(state, language)
+    content = producer.produce_narrative(state, "en")
+    content = _translate_content(content, language)
     narrative, _ = MatchNarrative.objects.update_or_create(
         match=match,
         content_type=MatchNarrative.ContentType.NARRATIVE,
@@ -45,7 +56,8 @@ def recap_api(request, match_id):
     language = request.GET.get("lang", "en")
     state = MatchState.from_match(match)
     producer = NarrativeProducer()
-    content = producer.produce_recap(state, language)
+    content = producer.produce_recap(state, "en")
+    content = _translate_content(content, language)
     narrative, _ = MatchNarrative.objects.update_or_create(
         match=match,
         content_type=MatchNarrative.ContentType.RECAP,
