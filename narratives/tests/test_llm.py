@@ -54,3 +54,32 @@ class LLMClientTests(SimpleTestCase):
             )
             result = client.chat_completion([{"role": "user", "content": "tactical"}])
             self.assertIn("pressing", result.lower())
+
+    def test_azure_url_uses_deployment_and_api_key_header(self):
+        client = LLMClient(
+            base_url="https://myresource.openai.azure.com",
+            api_key="azure-key",
+            model="my-deployment",
+            api_version="2024-02-01",
+        )
+        self.assertTrue(client.is_azure)
+        url = client._build_url()
+        self.assertIn("/openai/deployments/my-deployment/chat/completions", url)
+        self.assertIn("api-version=2024-02-01", url)
+        headers = client._build_headers()
+        self.assertEqual(headers["api-key"], "azure-key")
+
+    def test_azure_url_uses_env_deployment(self):
+        import os
+
+        os.environ["AZURE_OPENAI_DEPLOYMENT"] = "env-deployment"
+        try:
+            client = LLMClient(
+                base_url="https://myresource.openai.azure.com",
+                api_key="azure-key",
+            )
+            self.assertTrue(client.is_azure)
+            url = client._build_url()
+            self.assertIn("/openai/deployments/env-deployment/chat/completions", url)
+        finally:
+            del os.environ["AZURE_OPENAI_DEPLOYMENT"]

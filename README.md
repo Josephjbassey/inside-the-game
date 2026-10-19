@@ -42,9 +42,18 @@ python manage.py runserver
 
 Required env vars:
 
-- `NVIDIA_API_BASE` — Azure AI Foundry chat completions endpoint (OpenAI-compatible)
-- `NVIDIA_API_KEY` — Azure AI Foundry API key
+Option A — Azure AI Foundry (OpenAI-compatible):
+- `NVIDIA_API_BASE` — Foundry chat completions endpoint
+- `NVIDIA_API_KEY` — Foundry API key
 - `NVIDIA_MODEL` — your Foundry model deployment name
+
+Option B — Azure OpenAI:
+- `AZURE_OPENAI_ENDPOINT` — your Azure OpenAI resource endpoint
+  (e.g. https://<resource>.openai.azure.com)
+- `AZURE_OPENAI_API_KEY` — your Azure OpenAI API key
+- `AZURE_OPENAI_DEPLOYMENT` — your model deployment name
+- `AZURE_OPENAI_API_VERSION` — optional, defaults to 2024-02-01
+
 - `AZURE_TRANSLATOR_KEY`, `AZURE_TRANSLATOR_ENDPOINT`, `AZURE_TRANSLATOR_REGION` — Azure AI Translator
 
 ## Demo
