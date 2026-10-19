@@ -20,15 +20,15 @@ broadcast, and streaming scenarios.
 - Django 6.1.2 + HTMX + Django templates (no React, no CDN)
 - Geist font, dark mode default, Crimson #DC143C accent
 - SQLite (no Redis), self-hosted assets
-- Nemotron-3 via NVIDIA Endpoints (local RTX 3060 or cloud API) for narrative generation
+- Azure AI Foundry / Foundry Agents (OpenAI-compatible chat completions) for narrative generation
 - Azure AI Translator for multi-language output
-- GitHub + GitHub Copilot
+- GitHub (public repository)
 
 ## Azure services used
 
 - Azure AI Translator (multi-language narratives)
-- Azure AI Services (Language — key phrase extraction)
-- GitHub / GitHub Copilot (code generation and review)
+- Azure AI Foundry (agentic workflow and narrative reasoning)
+- GitHub (public repository)
 
 ## Run locally
 
@@ -41,13 +41,15 @@ python manage.py runserver
 ```
 
 Required env vars:
-- `NVIDIA_API_BASE` — Nemotron-3 chat completions endpoint (e.g. `http://localhost:8080/v1`)
-- `NVIDIA_API_KEY` — NVIDIA Endpoints API key
+
+- `NVIDIA_API_BASE` — Azure AI Foundry chat completions endpoint (OpenAI-compatible)
+- `NVIDIA_API_KEY` — Azure AI Foundry API key
+- `NVIDIA_MODEL` — your Foundry model deployment name
 - `AZURE_TRANSLATOR_KEY`, `AZURE_TRANSLATOR_ENDPOINT`, `AZURE_TRANSLATOR_REGION` — Azure AI Translator
 
 ## Demo
 
-3-minute demo video: [record and link here]
+Demo video under 2 minutes (120 seconds): [record and link here]
 
 ## Repository
 

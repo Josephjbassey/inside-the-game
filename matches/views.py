@@ -123,6 +123,14 @@ def tactical_view(request, match_id):
             "events": events,
             "turning_points": turning_points,
             "statistics": stats,
+            "home_possession": stats["possession"][match.home_team],
+            "away_possession": stats["possession"][match.away_team],
+            "home_shots": stats["shots"][match.home_team],
+            "away_shots": stats["shots"][match.away_team],
+            "home_xg": stats["xg"][match.home_team],
+            "away_xg": stats["xg"][match.away_team],
+            "home_pressure": stats["pressure_final_third"][match.home_team],
+            "away_pressure": stats["pressure_final_third"][match.away_team],
         },
     )
 
