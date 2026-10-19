@@ -1,7 +1,5 @@
 """
 TDD: LLM client tests.
-
-These tests fail before narratives/llm.py exists, then pass after import.
 """
 import json
 from unittest.mock import patch
@@ -38,5 +36,21 @@ class LLMClientTests(SimpleTestCase):
         self.assertEqual(result, "Arsenal presses high.")
         req = mock_urlopen.call_args[0][0]
         self.assertEqual(req.method, "POST")
-        headers = dict(req.header_items())
-        self.assertEqual(headers["Authorization"], "Bearer test-key")
+        headers = {k.lower(): v for k, v in req.header_items()}
+        self.assertEqual(headers["authorization"], "Bearer test-key")
+
+    def test_chat_completion_falls_back_when_unconfigured(self):
+        client = LLMClient(base_url="", api_key="")
+        result = client.chat_completion([{"role": "user", "content": "narrative"}])
+        self.assertIsInstance(result, str)
+        self.assertGreater(len(result), 0)
+
+    def test_chat_completion_falls_back_when_endpoint_down(self):
+        with patch(
+            "narratives.llm.urllib.request.urlopen", side_effect=Exception("connection refused")
+        ):
+            client = LLMClient(
+                base_url="http://localhost:8080/v1", api_key="test-key"
+            )
+            result = client.chat_completion([{"role": "user", "content": "tactical"}])
+            self.assertIn("pressing", result.lower())
