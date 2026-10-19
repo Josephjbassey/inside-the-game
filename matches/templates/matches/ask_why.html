@@ -1,0 +1,101 @@
+{% extends "matches/base.html" %}
+{% load static %}
+
+{% block title %}{{ match.home_team }} vs {{ match.away_team }} — Ask Why{% endblock %}
+{% block nav_active_fan %}nav__link--active{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero__inner">
+        <div class="hero__team hero__team--home">
+            <div class="hero__team-abbr">{{ match.home_team|slice:":3"|upper }}</div>
+            <div class="hero__team-name">{{ match.home_team }}</div>
+        </div>
+        <div class="hero__center">
+            <div class="hero__score">
+                <span class="hero__score-num">{{ match.home_score }}</span>
+                <span class="hero__score-sep">–</span>
+                <span class="hero__score-num">{{ match.away_score }}</span>
+            </div>
+            <div class="hero__meta">
+                <span class="hero__status hero__status--live">
+                    <span class="hero__status-dot" aria-hidden="true"></span>
+                    {{ match.get_status_display|upper }}
+                </span>
+                <span class="hero__clock" data-clock="{{ match.match_clock }}">{{ match.match_clock }}s</span>
+            </div>
+        </div>
+        <div class="hero__team hero__team--away">
+            <div class="hero__team-abbr">{{ match.away_team|slice:":3"|upper }}</div>
+            <div class="hero__team-name">{{ match.away_team }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="card">
+    <div class="card__body">
+        <h3 class="card__title">Ask Why</h3>
+        <p style="color:var(--text-secondary);font-size:0.8125rem;margin-bottom:var(--space-md);">
+            Ask a question about the match. Answers are grounded in the events we’ve processed —
+            if the data can’t establish a conclusion, we’ll say so.
+        </p>
+        <form id="ask-why-form" style="display:flex;flex-direction:column;gap:var(--space-sm);">
+            <input type="text" id="why-question" placeholder="e.g. Why did momentum change in the last 10 minutes?"
+                   style="padding:var(--space-sm);border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--bg-card);color:var(--text-primary);font-family:var(--font-sans);font-size:0.875rem;">
+            <div style="display:flex;gap:var(--space-sm);">
+                <select id="why-lang" style="padding:var(--space-sm);border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--bg-card);color:var(--text-primary);font-family:var(--font-sans);font-size:0.875rem;">
+                    <option value="en" {% if language == 'en' %}selected{% endif %}>English</option>
+                    <option value="es" {% if language == 'es' %}selected{% endif %}>Español</option>
+                    <option value="fr" {% if language == 'fr' %}selected{% endif %}>Français</option>
+                    <option value="de" {% if language == 'de' %}selected{% endif %}>Deutsch</option>
+                    <option value="pt" {% if language == 'pt' %}selected{% endif %}>Português</option>
+                    <option value="zh" {% if language == 'zh' %}selected{% endif %}>中文</option>
+                </select>
+                <button type="submit" class="btn btn--primary btn--sm">Ask</button>
+            </div>
+        </form>
+        <div id="why-answer" style="margin-top:var(--space-lg);padding:var(--space-lg);background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);min-height:120px;">
+            <p id="why-answer-text" style="color:var(--text-primary);font-size:0.9375rem;line-height:1.7;"></p>
+            <p id="why-evidence" style="color:var(--text-secondary);font-size:0.75rem;margin-top:var(--space-sm);"></p>
+            <p id="why-reason" style="color:var(--text-muted);font-size:0.75rem;font-style:italic;margin-top:var(--space-xs);"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('ask-why-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const question = document.getElementById('why-question').value.trim();
+        const lang = document.getElementById('why-lang').value;
+        const answerEl = document.getElementById('why-answer-text');
+        const evidenceEl = document.getElementById('why-evidence');
+        const reasonEl = document.getElementById('why-reason');
+
+        if (!question) return;
+
+        answerEl.textContent = 'Thinking…';
+        evidenceEl.textContent = '';
+        reasonEl.textContent = '';
+
+        fetch(`/narratives/api/ask-why/{{ match.id }}/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify({ question: question, lang: lang }),
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            answerEl.textContent = data.answer || 'No answer available.';
+            if (data.evidence && data.evidence.length) {
+                evidenceEl.textContent = 'Evidence: ' + data.evidence.map(function (e) {
+                    return e.minute + "' " + e.event_type + " by " + e.player;
+                }).join(', ');
+            }
+            reasonEl.textContent = data.reason || '';
+        })
+        .catch(function () {
+            answerEl.textContent = 'Could not process your question.';
+        });
+    });
+</script>
+
+{% endblock %}

@@ -107,3 +107,32 @@ def fan_view(request, match_id):
         "matches/fan.html",
         {"match": match, "language": language, "narratives": narratives},
     )
+
+
+def tactical_view(request, match_id):
+    """Tactical explainer page: turning points with evidence linkage."""
+    match = get_object_or_404(Match, id=match_id)
+    events = list(match.events.all().order_by("minute", "second", "created_at"))
+    stats = MatchStats(match, events).as_dict()
+    turning_points = detect_turning_points(match, events, stats)
+    return render(
+        request,
+        "matches/tactical.html",
+        {
+            "match": match,
+            "events": events,
+            "turning_points": turning_points,
+            "statistics": stats,
+        },
+    )
+
+
+def ask_why_view(request, match_id):
+    """'Ask why' Q&A page grounded in match events."""
+    match = get_object_or_404(Match, id=match_id)
+    language = getattr(request, "language", "en")
+    return render(
+        request,
+        "matches/ask_why.html",
+        {"match": match, "language": language},
+    )

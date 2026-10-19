@@ -1,0 +1,113 @@
+{% extends "matches/base.html" %}
+{% load static %}
+
+{% block title %}{{ match.home_team }} vs {{ match.away_team }} — Tactical Explainer{% endblock %}
+{% block nav_active_studio %}nav__link--active{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero__inner">
+        <div class="hero__team hero__team--home">
+            <div class="hero__team-abbr">{{ match.home_team|slice:":3"|upper }}</div>
+            <div class="hero__team-name">{{ match.home_team }}</div>
+        </div>
+        <div class="hero__center">
+            <div class="hero__score">
+                <span class="hero__score-num">{{ match.home_score }}</span>
+                <span class="hero__score-sep">–</span>
+                <span class="hero__score-num">{{ match.away_score }}</span>
+            </div>
+            <div class="hero__meta">
+                <span class="hero__status hero__status--live">
+                    <span class="hero__status-dot" aria-hidden="true"></span>
+                    {{ match.get_status_display|upper }}
+                </span>
+                <span class="hero__clock" data-clock="{{ match.match_clock }}">{{ match.match_clock }}s</span>
+            </div>
+        </div>
+        <div class="hero__team hero__team--away">
+            <div class="hero__team-abbr">{{ match.away_team|slice:":3"|upper }}</div>
+            <div class="hero__team-name">{{ match.away_team }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="dashboard-grid">
+    <div class="card" style="grid-column: 1 / -1;">
+        <div class="card__body">
+            <h3 class="card__title">Turning Points</h3>
+            <p style="color:var(--text-secondary);font-size:0.8125rem;margin-bottom:var(--space-md);">
+                Every detected change in momentum, linked to the events that caused it.
+            </p>
+            <div id="turning-points" class="ticker__list">
+                {% for tp in turning_points %}
+                <div class="ticker__item ticker__item--{{ tp.impact }}" style="border-left-color:var(--accent);">
+                    <div class="ticker__icon" style="background:var(--accent-dim);color:var(--accent);">●</div>
+                    <span class="ticker__minute">{{ tp.minute }}′</span>
+                    <span class="ticker__type" style="color:var(--text-primary);">{{ tp.title }}</span>
+                    <span class="ticker__detail">{{ tp.description }}</span>
+                    <span style="font-size:0.6875rem;color:var(--text-muted);text-transform:uppercase;">{{ tp.confidence }}</span>
+                </div>
+                {% empty %}
+                <p class="ticker__empty">No turning points detected yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card__body">
+            <h3 class="card__title">Match Statistics</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-md);">
+                <div>
+                    <p style="color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Possession</p>
+                    <p style="font-size:1.25rem;font-family:var(--font-mono);font-weight:700;color:var(--text-primary);">
+                        {{ statistics.possession.0 }}% – {{ statistics.possession.1 }}%
+                    </p>
+                </div>
+                <div>
+                    <p style="color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Shots</p>
+                    <p style="font-size:1.25rem;font-family:var(--font-mono);font-weight:700;color:var(--text-primary);">
+                        {{ statistics.shots.0 }} – {{ statistics.shots.1 }}
+                    </p>
+                </div>
+                <div>
+                    <p style="color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">xG</p>
+                    <p style="font-size:1.25rem;font-family:var(--font-mono);font-weight:700;color:var(--color-xg);">
+                        {{ statistics.xg.0 }} – {{ statistics.xg.1 }}
+                    </p>
+                </div>
+                <div>
+                    <p style="color:var(--text-secondary);font-size:0.75rem;text-transform:uppercase;">Pressure (final third)</p>
+                    <p style="font-size:1.25rem;font-family:var(--font-mono);font-weight:700;color:var(--text-primary);">
+                        {{ statistics.pressure_final_third.0 }} – {{ statistics.pressure_final_third.1 }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card__body">
+            <h3 class="card__title">Evidence Detail</h3>
+            <p style="color:var(--text-secondary);font-size:0.8125rem;margin-bottom:var(--space-md);">
+                Each turning point is backed by specific match events — no AI-invented explanations.
+            </p>
+            <div id="evidence-list" class="ticker__list">
+                {% for tp in turning_points %}
+                <div class="card" style="margin-bottom:var(--space-sm);padding:var(--space-md);">
+                    <p style="font-weight:600;color:var(--text-primary);margin-bottom:var(--space-xs);">{{ tp.title }}</p>
+                    <p style="color:var(--text-secondary);font-size:0.8125rem;margin-bottom:var(--space-xs);">{{ tp.description }}</p>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">
+                        Evidence: {% for ev in tp.evidence %}{{ ev.minute }}′ {{ ev.event_type }} by {{ ev.player }}{% if not forlast %}, {% endif %}{% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="ticker__empty">No evidence available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
