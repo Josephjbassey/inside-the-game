@@ -1,16 +1,17 @@
 {% if events %}
-    <div class="space-y-2">
+    <div class="ticker__list">
         {% for event in events %}
-        <div class="flex items-start gap-3 py-2 border-b border-gray-700/50 last:border-0">
-            <span class="text-gray-500 text-xs font-mono">{{ event.minute }}'</span>
-            <span class="text-xs font-bold {% if event.event_type == 'goal' %}text-red-400{% elif event.event_type == 'shot' %}text-yellow-400{% else %}text-gray-300{% endif %}">
-                {{ event.get_event_type_display }}
-            </span>
-            <span class="text-xs text-gray-300">{{ event.player }} — {{ event.team }}</span>
-            {% if event.xg_value %}<span class="text-xs text-green-400 ml-1">xG {{ event.xg_value }}</span>{% endif %}
+        <div class="ticker__item ticker__item--{{ event.event_type }}">
+            <div class="ticker__icon ticker__icon--{{ event.event_type }}" aria-hidden="true">
+                {% if event.event_type == 'goal' %}⚽{% elif event.event_type == 'shot' %}🔫{% elif event.event_type == 'pass' %}🟦{% elif event.event_type == 'pressure' %}🟨{% elif event.event_type == 'card' %}🟨{% elif event.event_type == 'substitution' %}🔄{% elif event.event_type == 'corner' %}🏁{% elif event.event_type == 'foul' %}⚠️{% elif event.event_type == 'offside' %}🚩{% elif event.event_type == 'save' %}🧤{% else %}•{% endif %}
+            </div>
+            <span class="ticker__minute">{{ event.minute }}′</span>
+            <span class="ticker__type">{{ event.get_event_type_display|upper }}</span>
+            <span class="ticker__detail">{{ event.player }} — {{ event.team }}</span>
+            {% if event.xg_value %}<span class="ticker__xg">xG {{ event.xg_value }}</span>{% endif %}
         </div>
         {% endfor %}
     </div>
 {% else %}
-    <p class="text-gray-500 text-sm">No events yet.</p>
+    <p class="ticker__empty">No events yet.</p>
 {% endif %}

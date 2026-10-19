@@ -1,10 +1,23 @@
-<div class="grid grid-cols-2 gap-4 text-center">
-    <div class="bg-gray-700/50 p-3 rounded border border-gray-600">
-        <div class="text-xs text-gray-400 uppercase">{{ match.home_team }}</div>
-        <div class="text-lg font-mono text-green-400" id="xg-home">{{ match.xg_home }}</div>
+<div class="xg__rows">
+    <div class="xg__row">
+        <div class="xg__label-row">
+            <span class="xg__team-name">{{ match.home_team }}</span>
+            <span class="xg__value" id="xg-home">{{ match.xg_home }}</span>
+        </div>
+        <div class="xg__track">
+            <div class="xg__bar" style="width: {% if match.xg_home %}{{ match.xg_home }}0%{% else %}0%{% endif %}"></div>
+        </div>
     </div>
-    <div class="bg-gray-700/50 p-3 rounded border border-gray-600">
-        <div class="text-xs text-gray-400 uppercase">{{ match.away_team }}</div>
-        <div class="text-lg font-mono text-green-400" id="xg-away">{{ match.xg_away }}</div>
+    <div class="xg__row">
+        <div class="xg__label-row">
+            <span class="xg__team-name">{{ match.away_team }}</span>
+            <span class="xg__value" id="xg-away">{{ match.xg_away }}</span>
+        </div>
+        <div class="xg__track">
+            <div class="xg__bar" style="width: {% if match.xg_away %}{{ match.xg_away }}0%{% else %}0%{% endif %}"></div>
+        </div>
+    </div>
+    <div class="xg__vs">
+        <span class="xg__vs-badge">Expected Goals</span>
     </div>
 </div>

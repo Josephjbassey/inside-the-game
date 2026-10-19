@@ -1,10 +1,10 @@
-<div class="flex justify-between items-center mb-2 border-b border-gray-700 pb-1">
-    <span class="text-lg font-bold text-white">{{ match.home_team }}</span>
-    <span class="text-2xl font-mono text-white">{{ match.home_score }} - {{ match.away_score }}</span>
-    <span class="text-lg font-bold text-white">{{ match.away_team }}</span>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md);border-bottom:1px solid var(--border-subtle);padding-bottom:var(--space-xs);">
+    <span style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ match.home_team }}</span>
+    <span style="font-size:1.75rem;font-family:var(--font-mono);font-weight:800;color:var(--text-primary);">{{ match.home_score }} – {{ match.away_score }}</span>
+    <span style="font-size:1.125rem;font-weight:700;color:var(--text-primary);">{{ match.away_team }}</span>
 </div>
-<div class="flex justify-between items-center mb-1">
-    <span class="text-gray-400 text-sm">Clock</span>
-    <span class="text-red-400 font-mono" id="live-clock">{{ match.match_clock }}s</span>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-xs);">
+    <span style="color:var(--text-secondary);font-size:0.75rem;">Clock</span>
+    <span style="color:var(--accent);font-family:var(--font-mono);font-weight:600;" data-clock="{{ match.match_clock }}">{{ match.match_clock }}s</span>
 </div>
-<div class="text-gray-400 text-xs uppercase tracking-wider mt-1">{{ match.get_status_display }}</div>
+<div style="color:var(--text-muted);font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.08em;margin-top:var(--space-xs);">{{ match.get_status_display }}</div>
