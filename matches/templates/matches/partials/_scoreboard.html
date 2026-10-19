@@ -1,0 +1,10 @@
+<div class="flex justify-between items-center mb-2 border-b border-gray-700 pb-1">
+    <span class="text-lg font-bold text-white">{{ match.home_team }}</span>
+    <span class="text-2xl font-mono text-white">{{ match.home_score }} - {{ match.away_score }}</span>
+    <span class="text-lg font-bold text-white">{{ match.away_team }}</span>
+</div>
+<div class="flex justify-between items-center mb-1">
+    <span class="text-gray-400 text-sm">Clock</span>
+    <span class="text-red-400 font-mono" id="live-clock">{{ match.match_clock }}s</span>
+</div>
+<div class="text-gray-400 text-xs uppercase tracking-wider mt-1">{{ match.get_status_display }}</div>
