@@ -49,3 +49,26 @@ def xg_partial(request, match_id):
     """HTMX partial: xG comparison display."""
     match = get_object_or_404(Match, id=match_id)
     return render(request, "matches/partials/_xg_chart.html", {"match": match})
+
+
+def studio_view(request, match_id):
+    """Clean broadcast overlay: score, clock, ticker, narrative banner."""
+    match = get_object_or_404(Match, id=match_id)
+    events = match.events.all()[:20]
+    return render(
+        request,
+        "matches/studio.html",
+        {"match": match, "events": events},
+    )
+
+
+def fan_view(request, match_id):
+    """Fan personalized view: language toggle, narrative in chosen language."""
+    match = get_object_or_404(Match, id=match_id)
+    language = getattr(request, "language", "en")
+    narratives = match.narratives.filter(language=language)
+    return render(
+        request,
+        "matches/fan.html",
+        {"match": match, "language": language, "narratives": narratives},
+    )
